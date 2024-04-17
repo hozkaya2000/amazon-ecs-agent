@@ -16,6 +16,7 @@ package engine
 import (
 	apicontainer "github.com/aws/amazon-ecs-agent/agent/api/container"
 	apitask "github.com/aws/amazon-ecs-agent/agent/api/task"
+	"github.com/aws/amazon-ecs-agent/agent/data"
 	"github.com/aws/amazon-ecs-agent/agent/engine/dockerstate"
 	"github.com/aws/amazon-ecs-agent/agent/engine/image"
 	"github.com/aws/amazon-ecs-agent/agent/utils"
@@ -227,28 +228,30 @@ func (engine *DockerTaskEngine) saveDockerContainerData(container *apicontainer.
 }
 
 func (engine *DockerTaskEngine) removeTaskData(task *apitask.Task) {
-	id, err := utils.GetTaskID(task.Arn)
-	if err != nil {
-		seelog.Errorf("Failed to get task id from task ARN %s: %v", task.Arn, err)
-		return
-	}
-	err = engine.dataClient.DeleteTask(id)
-	if err != nil {
-		seelog.Errorf("Failed to remove data for task %s: %v", task.Arn, err)
+	for _, c := range task.Containers {
+		id, err := data.GetContainerID(c)
+		if err != nil {
+			seelog.Errorf("Failed to get container id from container %s: %v", c.Name, err)
+			continue
+		}
+		err = engine.dataClient.DeleteContainer(id)
+		if err != nil {
+			seelog.Errorf("Failed to remove data for container %s: %v", c.Name, err)
+		}
 	}
 
-	seelog.Info("Skipping container removal for bug reproduction")
+	seelog.Info("Not removing task data to see if agent exiting at such a point causes issues")
 
-	//for _, c := range task.Containers {
-	//	id, err := data.GetContainerID(c)
-	//	if err != nil {
-	//		seelog.Errorf("Failed to get container id from container %s: %v", c.Name, err)
-	//		continue
-	//	}
-	//	err = engine.dataClient.DeleteContainer(id)
-	//	if err != nil {
-	//		seelog.Errorf("Failed to remove data for container %s: %v", c.Name, err)
-	//	}
+	//
+	//
+	//id, err := utils.GetTaskID(task.Arn)
+	//if err != nil {
+	//	seelog.Errorf("Failed to get task id from task ARN %s: %v", task.Arn, err)
+	//	return
+	//}
+	//err = engine.dataClient.DeleteTask(id)
+	//if err != nil {
+	//	seelog.Errorf("Failed to remove data for task %s: %v", task.Arn, err)
 	//}
 }
 
