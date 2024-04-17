@@ -240,19 +240,15 @@ func (engine *DockerTaskEngine) removeTaskData(task *apitask.Task) {
 		}
 	}
 
-	seelog.Info("Not removing task data to see if agent exiting at such a point causes issues")
-
-	//
-	//
-	//id, err := utils.GetTaskID(task.Arn)
-	//if err != nil {
-	//	seelog.Errorf("Failed to get task id from task ARN %s: %v", task.Arn, err)
-	//	return
-	//}
-	//err = engine.dataClient.DeleteTask(id)
-	//if err != nil {
-	//	seelog.Errorf("Failed to remove data for task %s: %v", task.Arn, err)
-	//}
+	id, err := utils.GetTaskID(task.Arn)
+	if err != nil {
+		seelog.Errorf("Failed to get task id from task ARN %s: %v", task.Arn, err)
+		return
+	}
+	err = engine.dataClient.DeleteTask(id)
+	if err != nil {
+		seelog.Errorf("Failed to remove data for task %s: %v", task.Arn, err)
+	}
 }
 
 func (engine *DockerTaskEngine) removeENIAttachmentData(mac string) {
