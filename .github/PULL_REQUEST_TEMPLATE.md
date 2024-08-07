@@ -35,8 +35,15 @@ You can see our changelog entry style here:
 https://github.com/aws/amazon-ecs-agent/commit/c9aefebc2b3007f09468f651f6308136bd7b384f
 -->
 
+### Additional Information
+
 **Does this PR include breaking model changes? If so, Have you added transformation functions?**
 <!-- If yes, next release should have a upgraded minor version -->  
+
+**Does this PR include the addition of new environment variables in the README?**
+<!-- If it is a sensitive variable, add it to this blocklist in ecs-logs-collector here: https://github.com/aws/amazon-ecs-logs-collector/blob/master/ecs-logs-collector.sh#L63
+If it is not a sensitive variable, add it to the allowlist in ecs-logs-collector here: https://github.com/aws/amazon-ecs-logs-collector/blob/master/ecs-logs-collector.sh#L66
+-->
 
 ### Licensing
 
